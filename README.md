@@ -25,3 +25,8 @@ It uses a trained RandomForest model and is deployed using Gradio and Hugging Fa
 ```bash
 pip install -r requirements.txt
 python app.py
+
+## 🖼️ Live App Demo
+
+![Salary Predictor App](Screenshot(16).png)
+
