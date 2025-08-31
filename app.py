@@ -5,29 +5,34 @@ import joblib
 # Load the model
 model = joblib.load("salary_predictor_model.pkl")
 
+# Encoding maps
 workclass_map = {'Private': 3, 'Self-emp-not-inc': 4, 'Local-gov': 1, 'State-gov': 5}
 occupation_map = {'Tech-support': 12, 'Craft-repair': 2, 'Other-service': 9, 'Sales': 10}
 relationship_map = {'Husband': 0, 'Not-in-family': 1, 'Own-child': 2, 'Unmarried': 4}
 
+# Prediction function
 def predict_salary(age, education_num, hours_per_week, capital_gain, capital_loss,
                    workclass, occupation, relationship):
     workclass_val = workclass_map.get(workclass, 0)
     occupation_val = occupation_map.get(occupation, 0)
     relationship_val = relationship_map.get(relationship, 0)
+    hours_per_age = hours_per_week / age
 
     input_data = pd.DataFrame([[
         age, workclass_val, 0, 0, education_num, 0,
         occupation_val, relationship_val, 0, 0,
-        capital_gain, capital_loss, hours_per_week, 0
+        capital_gain, capital_loss, hours_per_week, 0,
+        hours_per_age
     ]], columns=[
         'age', 'workclass', 'fnlwgt', 'education', 'educational-num', 'marital-status',
         'occupation', 'relationship', 'race', 'gender', 'capital-gain', 'capital-loss',
-        'hours-per-week', 'native-country'
+        'hours-per-week', 'native-country', 'hours_per_age'
     ])
 
     prediction = model.predict(input_data)[0]
     return ">50K" if prediction == 1 else "<=50K"
 
+# Gradio Interface
 interface = gr.Interface(
     fn=predict_salary,
     inputs=[
